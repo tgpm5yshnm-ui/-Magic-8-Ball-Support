@@ -81,6 +81,66 @@
     }
     .nav-links a:hover { color: var(--white); }
 
+    /* ── Privacy Policy Modal ── */
+    .pp-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(5, 15, 30, 0.88);
+      backdrop-filter: blur(6px);
+      overflow-y: auto;
+      padding: 40px 20px;
+    }
+    .pp-overlay.active { display: block; }
+    .pp-modal {
+      max-width: 780px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #0d2240, #1a3a6c);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 52px 56px;
+      position: relative;
+    }
+    .pp-close {
+      position: absolute; top: 20px; right: 24px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--card-border);
+      color: var(--white); font-size: 18px;
+      width: 36px; height: 36px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .pp-close:hover { background: rgba(255,255,255,0.16); }
+    .pp-modal h1 {
+      font-size: 28px; font-weight: 700; margin-bottom: 6px; color: var(--white);
+    }
+    .pp-meta { font-size: 13px; color: var(--text-dimmer); margin-bottom: 32px; }
+    .pp-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(74,144,217,0.12);
+      border: 1px solid rgba(74,144,217,0.28);
+      border-radius: 8px; padding: 9px 14px;
+      font-size: 13px; color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .pp-modal h2 {
+      font-size: 15px; font-weight: 700; color: var(--white);
+      margin: 28px 0 8px; padding: 0; border: none; letter-spacing: 0.3px;
+      text-transform: uppercase; font-size: 12px; color: var(--accent);
+      letter-spacing: 1px;
+    }
+    .pp-modal p { font-size: 14px; color: var(--text-dim); line-height: 1.78; margin-bottom: 12px; }
+    .pp-modal ul { padding-left: 20px; margin: 4px 0 14px; }
+    .pp-modal li { font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-bottom: 5px; }
+    .pp-modal a { color: var(--accent); text-decoration: none; }
+    .pp-modal a:hover { text-decoration: underline; }
+    .pp-divider { border: none; border-top: 1px solid var(--card-border); margin: 24px 0; }
+    .pp-section { margin-bottom: 8px; }
+    @media (max-width: 600px) {
+      .pp-modal { padding: 36px 22px; }
+      .pp-modal h1 { font-size: 22px; }
+    }
+
     /* ── Hero ── */
     .hero {
       text-align: center;
@@ -294,6 +354,7 @@
       <li><a href="#features">Features</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="#" onclick="openPrivacy(event)">Privacy Policy</a></li>
     </ul>
   </nav>
 
@@ -420,11 +481,142 @@
   <!-- Footer -->
   <footer>
     <p>© 2026 Magic 8 Ball. All rights reserved. &nbsp;·&nbsp;
-      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="#" onclick="openPrivacy(event)">Privacy Policy</a> &nbsp;·&nbsp;
       <a href="https://reportaproblem.apple.com" target="_blank" rel="noopener">Apple Refunds</a>
     </p>
   </footer>
 
+</div>
+
+<!-- ── Privacy Policy Modal ─────────────────────────────────── -->
+<div class="pp-overlay" id="ppOverlay" onclick="closePrivacyOnBg(event)">
+  <div class="pp-modal" id="ppModal">
+    <button class="pp-close" onclick="closePrivacy()" aria-label="Close">✕</button>
+
+    <h1>🔮 Privacy Policy</h1>
+    <p class="pp-meta">Magic 8 Ball &nbsp;·&nbsp; Effective Date: June 18, 2026 &nbsp;·&nbsp; Last Updated: June 18, 2026</p>
+
+    <div class="pp-badge">🛡️ The App collects no personal data. Support form submissions are used solely to respond to your inquiry.</div>
+
+    <div class="pp-section">
+      <h2>1 · Overview</h2>
+      <p>Magic 8 Ball ("the App", "we", "our") is a mobile entertainment application for iPhone developed and operated as an independent app. This Privacy Policy explains what information the App accesses, how it is used, and your rights as a user. We are committed to full compliance with Apple's App Store Review Guidelines, the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), and all applicable privacy laws.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>2 · Information We Collect</h2>
+      <p><strong>Through the App itself</strong>, Magic 8 Ball is designed with privacy as a default. The App does <strong>not</strong> collect, store, transmit, or share:</p>
+      <ul>
+        <li>Your location or GPS data</li>
+        <li>Your device identifiers (IDFA, IDFV, or similar)</li>
+        <li>Your contacts, photos, or files</li>
+        <li>Your usage behavior, analytics, or crash logs via any third-party tracker</li>
+        <li>Any data for advertising or marketing purposes</li>
+      </ul>
+      <p><strong>Through this support website</strong>, we collect the following information <em>only when you voluntarily submit the contact form</em>:</p>
+      <ul>
+        <li><strong>Your name</strong> — so we know how to address you in our reply</li>
+        <li><strong>Your email address</strong> — so we can respond to your message</li>
+        <li><strong>Your message and subject</strong> — the content of your support request</li>
+      </ul>
+      <p>This information is used solely to respond to your inquiry and is not used for marketing, shared with advertisers, or added to any mailing list. You may request deletion of this data at any time by contacting us.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>3 · Microphone & Speech Recognition</h2>
+      <p>The App includes an optional voice input feature that uses Apple's <strong>Speech Recognition framework (SFSpeechRecognizer)</strong> and <strong>AVFoundation</strong> to transcribe your spoken questions in real time.</p>
+      <ul>
+        <li><strong>Microphone access</strong> is only active while you are actively holding the microphone button. It stops the moment you release it.</li>
+        <li><strong>Audio is never recorded or stored</strong> by the App. No audio files are saved to your device or transmitted to our servers.</li>
+        <li>Speech processing may be performed by <strong>Apple's servers</strong> or on-device, depending on your iOS settings and device capabilities. This processing is governed entirely by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+        <li>You will be prompted to grant microphone and speech recognition permissions before the feature activates. You may revoke these permissions at any time in <strong>Settings → Privacy & Security</strong>.</li>
+      </ul>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>4 · Motion & Accelerometer Data</h2>
+      <p>The App uses your device's accelerometer via Apple's <strong>CoreMotion framework</strong> to detect shake gestures. This motion data is processed entirely <strong>on-device in real time</strong> and is never stored, logged, or transmitted. No CoreMotion data leaves your device.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>5 · In-App Purchases</h2>
+      <p>The App offers optional consumable in-app purchases ("tips") processed exclusively through <strong>Apple's StoreKit framework</strong>. All payment transactions are handled entirely by Apple. We never see, receive, or store your payment information, credit card details, or Apple ID. Purchase records are managed by Apple and subject to <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</p>
+      <p>For refund requests, visit <a href="https://reportaproblem.apple.com" target="_blank" rel="noopener">reportaproblem.apple.com</a>.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>6 · Data Shared With Third Parties</h2>
+      <p>We do not sell, rent, trade, or share your personal data with third parties for commercial purposes. The only third-party interactions are:</p>
+      <ul>
+        <li><strong>Apple Inc.</strong> — for payment processing (StoreKit), speech recognition (SFSpeechRecognizer), and operating system services. These are governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+        <li><strong>EmailJS</strong> — when you submit the contact form on this support page, your name, email address, and message are transmitted via EmailJS to deliver your message to us. EmailJS acts as a delivery service only and does not use your data for any other purpose. See <a href="https://www.emailjs.com/legal/privacy-policy/" target="_blank" rel="noopener">EmailJS Privacy Policy</a>.</li>
+      </ul>
+      <p>Your email address is used exclusively to reply to your support request. It is never added to a mailing list, shared with advertisers, or used for any purpose beyond responding to you.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>7 · Children's Privacy</h2>
+      <p>Magic 8 Ball is a general-audience entertainment app. We do not knowingly collect any personal information from children under the age of 13 (or 16 in the European Economic Area). The App does not contain advertising, behavioral tracking, or social features. If you believe a child has inadvertently submitted personal information via our support form, please contact us immediately at the address below so we may delete it.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>8 · Data Security</h2>
+      <p>Since the App does not collect or store personal data, there is no user data at risk from our side. All sensitive operations (payments, speech processing) are handled by Apple's secure infrastructure. This support website is delivered over HTTPS.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>9 · Your Rights (GDPR / CCPA)</h2>
+      <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+      <ul>
+        <li><strong>Right to Access</strong> — request a copy of any data we hold about you</li>
+        <li><strong>Right to Erasure</strong> — request deletion of your personal data</li>
+        <li><strong>Right to Rectification</strong> — request correction of inaccurate data</li>
+        <li><strong>Right to Object</strong> — object to processing of your data</li>
+        <li><strong>Right to Portability</strong> — receive your data in a portable format</li>
+        <li><strong>Do Not Sell My Data</strong> — we do not sell your data. Ever.</li>
+      </ul>
+      <p>Since Magic 8 Ball does not collect personal data through the App itself, these rights primarily apply to any information you voluntarily submit via this support website's contact form. To exercise any right, contact us below.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>10 · Cookies & Tracking</h2>
+      <p>The Magic 8 Ball app contains <strong>no advertising SDKs, no analytics trackers, no cookies, and no fingerprinting scripts</strong>. This support website also does not use cookies or tracking technologies of any kind.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>11 · Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time to reflect changes in the App or applicable law. The "Last Updated" date at the top of this page will always reflect the most recent revision. Continued use of the App after any changes constitutes your acceptance of the revised policy. We encourage you to review this page periodically.</p>
+    </div>
+
+    <hr class="pp-divider"/>
+
+    <div class="pp-section">
+      <h2>12 · Contact Us</h2>
+      <p>If you have any questions, concerns, or requests regarding this Privacy Policy or your data, please reach out using the contact form on this page or by scrolling up to the <strong>Get in Touch</strong> section.</p>
+      <p>We will respond to all privacy-related inquiries within <strong>30 days</strong>.</p>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -445,6 +637,24 @@
       container.appendChild(s);
     }
   })();
+
+  // ── Privacy Policy modal ───────────────────────────────────
+  function openPrivacy(e) {
+    if (e) e.preventDefault();
+    document.getElementById('ppOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('ppModal').scrollTop = 0;
+  }
+  function closePrivacy() {
+    document.getElementById('ppOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function closePrivacyOnBg(e) {
+    if (e.target === document.getElementById('ppOverlay')) closePrivacy();
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePrivacy();
+  });
 
   // ── FAQ accordion ──────────────────────────────────────────
   function toggleFaq(btn) {
