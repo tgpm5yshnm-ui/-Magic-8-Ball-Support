@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Magic 8 Ball — Support</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-deep:   #0f2744;
+      --blue-mid:    #1a3a6c;
+      --blue-light:  #2d5a9e;
+      --grey:        #8a9eab;
+      --white:       #ffffff;
+      --text-dim:    rgba(255,255,255,0.60);
+      --text-dimmer: rgba(255,255,255,0.35);
+      --card-bg:     rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --input-bg:    rgba(255,255,255,0.08);
+      --input-focus: rgba(255,255,255,0.18);
+      --accent:      #4a90d9;
+      --accent-glow: rgba(74,144,217,0.35);
+      --success:     #3ecf7a;
+      --error:       #f06060;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(145deg, #0a1929 0%, #0f2744 30%, #1a3a6c 60%, #6a8fa8 100%);
+      min-height: 100vh;
+      color: var(--white);
+      line-height: 1.6;
+    }
+
+    /* ── Stars ── */
+    .stars {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+    }
+
+    /* ── Layout ── */
+    .page { position: relative; z-index: 1; }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10, 25, 41, 0.7);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .ball-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #3a3a3a, #000);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    .ball-icon span {
+      font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9);
+      font-family: Georgia, serif;
+    }
+    .brand-name {
+      font-size: 17px; font-weight: 600; color: var(--white);
+      letter-spacing: 0.3px;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--text-dim); text-decoration: none; font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .hero-ball {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 32%, #3a3a3a, #111 50%, #000);
+      margin: 0 auto 28px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(74,144,217,0.15);
+      position: relative;
+    }
+    .hero-ball::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 18px;
+      width: 26px; height: 16px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.18), transparent);
+      border-radius: 50%;
+    }
+    .inner-circle {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #1a1a4a, #05050f);
+      border: 1px solid rgba(100,100,200,0.4);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .inner-circle span {
+      font-family: Georgia, serif; font-size: 20px; font-weight: 700;
+      color: rgba(220,228,255,0.95);
+    }
+    .hero h1 {
+      font-size: 42px; font-weight: 700; letter-spacing: -0.5px;
+      margin-bottom: 14px; line-height: 1.15;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p {
+      font-size: 17px; color: var(--text-dim); max-width: 480px; margin: 0 auto;
+    }
+
+    /* ── Sections ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+    section { margin-bottom: 64px; }
+    section h2 {
+      font-size: 22px; font-weight: 600; margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--white);
+    }
+
+    /* ── Cards grid ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .card-icon { font-size: 28px; margin-bottom: 12px; }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .card p  { font-size: 14px; color: var(--text-dim); line-height: 1.55; }
+
+    /* ── FAQ ── */
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; background: none; border: none; color: var(--white);
+      font-size: 15px; font-weight: 500; text-align: left;
+      padding: 18px 20px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px;
+    }
+    .faq-q:hover { background: rgba(255,255,255,0.04); }
+    .faq-q .chevron {
+      font-size: 12px; color: var(--text-dim); flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+    .faq-item.open .chevron { transform: rotate(180deg); }
+    .faq-a {
+      font-size: 14px; color: var(--text-dim); line-height: 1.6;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 20px;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
+
+    /* ── Contact form ── */
+    .form-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 36px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); margin-bottom: 7px; letter-spacing: 0.3px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: inherit;
+      resize: vertical;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-dimmer); }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
+      background: var(--input-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .field select option { background: #0f2744; color: #fff; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(74,144,217,0.35);
+      margin-top: 6px;
+    }
+    .submit-btn:hover:not(:disabled) {
+      background: #5aa0e8;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(74,144,217,0.5);
+    }
+    .submit-btn:active:not(:disabled) { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .form-status {
+      margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+      font-size: 14px; font-weight: 500; display: none; text-align: center;
+    }
+    .form-status.success {
+      display: block;
+      background: rgba(62,207,122,0.15);
+      border: 1px solid rgba(62,207,122,0.35);
+      color: var(--success);
+    }
+    .form-status.error {
+      display: block;
+      background: rgba(240,96,96,0.15);
+      border: 1px solid rgba(240,96,96,0.35);
+      color: var(--error);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 28px 40px;
+      text-align: center;
+      color: var(--text-dimmer);
+      font-size: 13px;
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--white); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 50px 20px 40px; }
+      .hero h1 { font-size: 30px; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-wrap { padding: 24px 20px; }
+      footer { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<div class="page">
+
+  <!-- Nav -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <div class="ball-icon"><span>8</span></div>
+      <span class="brand-name">Magic 8 Ball</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-ball">
+      <div class="inner-circle"><span>8</span></div>
+    </div>
+    <h1>Magic 8 Ball<br><em>Support Center</em></h1>
+    <p>Shake for answers. Speak your question. The oracle is always listening.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Features -->
+    <section id="features">
+      <h2>How the App Works</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">📳</div>
+          <h3>Shake to Reveal</h3>
+          <p>Give your iPhone a real shake. CoreMotion detects the gesture and the ball bounces to life with your answer.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎙️</div>
+          <h3>Speak Your Question</h3>
+          <p>Hold the microphone button and ask aloud. Your question appears live on screen as you speak using on-device speech recognition.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔮</div>
+          <h3>Color-Coded Answers</h3>
+          <p>The oracle's inner eye glows green for positive answers, amber for neutral, and red when the outlook is grim.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">☕️</div>
+          <h3>Tip the Oracle</h3>
+          <p>Love the app? Support it from inside using the built-in tip jar — Kind Soul, True Believer, or Cosmic Patron.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          The shake isn't being detected — what should I do?
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">Make sure your iPhone isn't lying flat on a table. Hold it naturally in your hand and give it a firm, short shake — like a cocktail shaker. If it still doesn't respond, try restarting the app. The shake threshold requires a quick jolt of about 2.5g.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          The microphone button isn't transcribing my voice.
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">Go to Settings → Privacy & Security → Microphone and make sure Magic 8 Ball is enabled. Also check Settings → Privacy & Security → Speech Recognition. Both permissions are required for the voice feature to work.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          My in-app purchase didn't go through. Was I charged?
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">If the payment sheet closed without a confirmation, you were not charged. All purchases are processed directly by Apple and are subject to their refund policy. For any billing concerns, visit reportaproblem.apple.com.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How do I request a refund for a tip?
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">Refunds for in-app purchases are handled by Apple. Visit reportaproblem.apple.com, sign in with your Apple ID, find the purchase, and tap "Report a Problem" to submit a refund request.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does the app require an internet connection?
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">The core 8 Ball experience — shaking and getting answers — works fully offline. Speech recognition may use Apple's servers for best results, though on-device fallback is available. The tip jar requires an internet connection to process payments.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Which iPhone models and iOS versions are supported?
+          <span class="chevron">▼</span>
+        </button>
+        <div class="faq-a">Magic 8 Ball requires iOS 16 or later and is compatible with iPhone 8 and newer. The shake feature uses the built-in accelerometer, which is present on all supported devices.</div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2>Get in Touch</h2>
+      <div class="form-wrap">
+        <div class="form-row">
+          <div class="field">
+            <label for="user_name">Your Name</label>
+            <input id="user_name" type="text" placeholder="Jane Smith" autocomplete="name"/>
+          </div>
+          <div class="field">
+            <label for="user_email">Email Address</label>
+            <input id="user_email" type="email" placeholder="jane@example.com" autocomplete="email"/>
+          </div>
+        </div>
+        <div class="field">
+          <label for="subject">Topic</label>
+          <select id="subject">
+            <option value="Bug Report">🐛  Bug Report</option>
+            <option value="Purchase Issue">💳  Purchase / Billing Issue</option>
+            <option value="Feature Request">💡  Feature Request</option>
+            <option value="General Question">💬  General Question</option>
+            <option value="Other">✉️  Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" rows="5" placeholder="Describe your issue or question in as much detail as you can…"></textarea>
+        </div>
+        <button class="submit-btn" id="sendBtn" onclick="sendEmail()">Send Message</button>
+        <div class="form-status" id="formStatus"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Magic 8 Ball. All rights reserved. &nbsp;·&nbsp;
+      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="https://reportaproblem.apple.com" target="_blank" rel="noopener">Apple Refunds</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  // ── Stars ──────────────────────────────────────────────────
+  (function() {
+    var container = document.getElementById('stars');
+    for (var i = 0; i < 80; i++) {
+      var s = document.createElement('div');
+      s.className = 'star';
+      var size = Math.random() * 2.2 + 0.8;
+      s.style.cssText = [
+        'width:'   + size + 'px',
+        'height:'  + size + 'px',
+        'left:'    + Math.random() * 100 + '%',
+        'top:'     + Math.random() * 100 + '%',
+        'opacity:' + (Math.random() * 0.45 + 0.08)
+      ].join(';');
+      container.appendChild(s);
+    }
+  })();
+
+  // ── FAQ accordion ──────────────────────────────────────────
+  function toggleFaq(btn) {
+    var item = btn.closest('.faq-item');
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(el) {
+      el.classList.remove('open');
+    });
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ── EmailJS ────────────────────────────────────────────────
+  (function() {
+    emailjs.init({ publicKey: 'S7Pe6J0uZ47mn4_9s20x8' });
+  })();
+
+  function sendEmail() {
+    var name    = document.getElementById('user_name').value.trim();
+    var email   = document.getElementById('user_email').value.trim();
+    var subject = document.getElementById('subject').value;
+    var message = document.getElementById('message').value.trim();
+    var status  = document.getElementById('formStatus');
+    var btn     = document.getElementById('sendBtn');
+
+    // Basic validation
+    if (!name || !email || !message) {
+      status.className = 'form-status error';
+      status.textContent = 'Please fill in your name, email, and message.';
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.className = 'form-status error';
+      status.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    status.className = 'form-status';
+    status.style.display = 'none';
+
+    emailjs.send('service_bbhc8is', 'template_tlkalxd', {
+      from_name:    name,
+      from_email:   email,
+      subject:      subject,
+      message:      message,
+      reply_to:     email
+    })
+    .then(function() {
+      status.className = 'form-status success';
+      status.textContent = '✓ Message sent! The oracle will be in touch soon.';
+      btn.textContent = 'Message Sent ✓';
+      document.getElementById('user_name').value    = '';
+      document.getElementById('user_email').value   = '';
+      document.getElementById('message').value      = '';
+      document.getElementById('subject').selectedIndex = 0;
+      setTimeout(function() { btn.disabled = false; btn.textContent = 'Send Message'; }, 4000);
+    })
+    .catch(function(err) {
+      status.className = 'form-status error';
+      status.textContent = 'Something went wrong. Please try again or email us directly.';
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+      console.error('EmailJS error:', err);
+    });
+  }
+</script>
+</body>
+</html>
