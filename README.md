@@ -10,7 +10,7 @@
 The support page is hosted via GitHub Pages at:
 
 ```
-https://tgpm5yshnm-ui.github.io/Magic-8-Ball-Support/
+https://tgpm5yshnm-ui.github.io/-Magic-8-Ball-Support/
 ```
 
 It includes:
