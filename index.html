@@ -4,7 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Magic 8 Ball — Support</title>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -463,10 +462,7 @@
     if (!isOpen) item.classList.add('open');
   }
 
-  // ── EmailJS ────────────────────────────────────────────────
-  (function() {
-    emailjs.init({ publicKey: 'S7Pe6J0uZ47mn4_9s20x8' });
-  })();
+  // ── FAQ accordion ─────────────────────────── (already above, skip duplicate)
 
   function sendEmail() {
     var name    = document.getElementById('user_name').value.trim();
@@ -476,48 +472,64 @@
     var status  = document.getElementById('formStatus');
     var btn     = document.getElementById('sendBtn');
 
-    // Basic validation
+    // Clear previous status
+    status.className = 'form-status';
+    status.style.display = 'none';
+
+    // Validation
     if (!name || !email || !message) {
       status.className = 'form-status error';
+      status.style.display = 'block';
       status.textContent = 'Please fill in your name, email, and message.';
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       status.className = 'form-status error';
+      status.style.display = 'block';
       status.textContent = 'Please enter a valid email address.';
       return;
     }
 
     btn.disabled = true;
     btn.textContent = 'Sending…';
-    status.className = 'form-status';
-    status.style.display = 'none';
 
     emailjs.send('service_bbhc8is', 'template_tlkalxd', {
-      from_name:    name,
-      from_email:   email,
-      subject:      subject,
-      message:      message,
-      reply_to:     email
+      from_name:  name,
+      from_email: email,
+      subject:    subject,
+      message:    message,
+      reply_to:   email
     })
-    .then(function() {
+    .then(function(response) {
+      console.log('EmailJS SUCCESS', response.status, response.text);
       status.className = 'form-status success';
+      status.style.display = 'block';
       status.textContent = '✓ Message sent! The oracle will be in touch soon.';
       btn.textContent = 'Message Sent ✓';
-      document.getElementById('user_name').value    = '';
-      document.getElementById('user_email').value   = '';
-      document.getElementById('message').value      = '';
+      document.getElementById('user_name').value = '';
+      document.getElementById('user_email').value = '';
+      document.getElementById('message').value = '';
       document.getElementById('subject').selectedIndex = 0;
-      setTimeout(function() { btn.disabled = false; btn.textContent = 'Send Message'; }, 4000);
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }, 4000);
     })
     .catch(function(err) {
+      console.error('EmailJS FAILED', JSON.stringify(err));
       status.className = 'form-status error';
-      status.textContent = 'Something went wrong. Please try again or email us directly.';
+      status.style.display = 'block';
+      status.textContent = 'Error ' + (err.status || '') + ': ' + (err.text || JSON.stringify(err));
       btn.disabled = false;
       btn.textContent = 'Send Message';
-      console.error('EmailJS error:', err);
     });
   }
+</script>
+
+<!-- EmailJS SDK loaded last so it is guaranteed ready before any call -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  emailjs.init({ publicKey: 'S7Pe6J0uZ47mn4_9s20x8' });
 </script>
 </body>
 </html>
