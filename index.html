@@ -403,14 +403,8 @@
           </div>
         </div>
         <div class="field">
-          <label for="subject">Topic</label>
-          <select id="subject">
-            <option value="Bug Report">🐛  Bug Report</option>
-            <option value="Purchase Issue">💳  Purchase / Billing Issue</option>
-            <option value="Feature Request">💡  Feature Request</option>
-            <option value="General Question">💬  General Question</option>
-            <option value="Other">✉️  Other</option>
-          </select>
+          <label for="subject">Subject</label>
+          <input id="subject" type="text" placeholder="What's your message about?"/>
         </div>
         <div class="field">
           <label for="message">Message</label>
@@ -477,10 +471,10 @@
     status.style.display = 'none';
 
     // Validation
-    if (!name || !email || !message) {
+    if (!name || !email || !subject || !message) {
       status.className = 'form-status error';
       status.style.display = 'block';
-      status.textContent = 'Please fill in your name, email, and message.';
+      status.textContent = 'Please fill in all fields.';
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -508,8 +502,8 @@
       btn.textContent = 'Message Sent ✓';
       document.getElementById('user_name').value = '';
       document.getElementById('user_email').value = '';
+      document.getElementById('subject').value = '';
       document.getElementById('message').value = '';
-      document.getElementById('subject').selectedIndex = 0;
       setTimeout(function() {
         btn.disabled = false;
         btn.textContent = 'Send Message';
@@ -529,7 +523,7 @@
 <!-- EmailJS SDK loaded last so it is guaranteed ready before any call -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-  emailjs.init({ publicKey: 'S7Pe6J0uZ47mn4_9s20x8' });
+  emailjs.init({ publicKey: 'lJQiiUOL0ZxfOHuMP' });
 </script>
 </body>
 </html>
